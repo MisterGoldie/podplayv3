@@ -7,6 +7,9 @@ export async function GET() {
       signature:
         "MHhiMDE3YWJiYTNkZTE4NjJmODMxMDFmY2FmYWNjNjdiM2UxOTI1Mjk0NTU1ZjBlMzM5ODNmODM1MWQxMWYwOWJmN2YxNzU2NzExY2YzNWRlMTgxNWMzMzAyN2Y4MmU1OWU1NWQ1MTdjYjA3MDA5ZWY0MjgwNTg0NTRkMWJjYmRlNjFj",
     },
+    baseBuilder: {
+      allowedAddresses: ["0x389355CBa617EA0b305e5105DC483251c80960d1"]
+    },
     frame: {
       version: "0.0.0",
       name: "POD Play v2",
