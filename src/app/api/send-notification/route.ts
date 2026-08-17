@@ -22,9 +22,9 @@ export async function POST(request: NextRequest) {
   const requestBody = requestSchema.safeParse(requestJson);
 
   if (requestBody.success === false) {
-    console.error('Invalid request body:', requestBody.error.errors);
+    console.error('Invalid request body:', requestBody.error.issues);
     return Response.json(
-      { success: false, errors: requestBody.error.errors },
+      { success: false, errors: requestBody.error.issues },
       { status: 400 }
     );
   }
@@ -62,9 +62,9 @@ export async function POST(request: NextRequest) {
     // Validate response using Farcaster SDK schema
     const responseBody = sendNotificationResponseSchema.safeParse(responseJson);
     if (responseBody.success === false) {
-      console.error('Invalid response format:', responseBody.error.errors);
+      console.error('Invalid response format:', responseBody.error.issues);
       return Response.json(
-        { success: false, errors: responseBody.error.errors },
+        { success: false, errors: responseBody.error.issues },
         { status: 500 }
       );
     }

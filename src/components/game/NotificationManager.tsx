@@ -1,7 +1,5 @@
 "use client";
 
-import { Context } from "@farcaster/miniapp-sdk";
-
 interface NotificationManagerProps {
   fid?: number;
   gameResult?: 'win' | 'loss' | 'draw';
