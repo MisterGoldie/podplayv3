@@ -1,4 +1,3 @@
-import { Button } from "~/components/ui/Button";
 import Image from "next/image";
 import { RefObject } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -126,7 +125,7 @@ export default function GameBoard({
       </div>
 
       <motion.div
-        className="flex w-full items-start justify-center px-4 pt-5"
+        className="flex w-full items-start justify-center px-3 pt-4"
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.35, duration: 0.4 }}
@@ -134,36 +133,40 @@ export default function GameBoard({
         <AnimatePresence>
           {gameOver && (
             <motion.div
-              className="grid grid-cols-2 gap-2"
+              className="grid w-full max-w-[340px] grid-cols-2 gap-2"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.4 }}
             >
-              <Button
+              <button
+                type="button"
                 onClick={handlePlayAgain}
-                className="h-[42px] text-lg pod-btn-primary"
+                className="pod-btn-primary h-11 w-full px-2 text-sm font-semibold leading-tight"
               >
                 Play Again
-              </Button>
-              <Button
+              </button>
+              <button
+                type="button"
                 onClick={resetGame}
-                className="h-[42px] text-lg"
+                className="pod-btn h-11 w-full px-2 text-sm font-semibold leading-tight"
               >
                 Back to Menu
-              </Button>
-              <Button
+              </button>
+              <button
+                type="button"
                 onClick={handleViewLeaderboard}
-                className="h-[42px] text-lg"
+                className="pod-btn h-11 w-full px-2 text-sm font-semibold leading-tight"
               >
                 Leaderboard
-              </Button>
-              <Button
+              </button>
+              <button
+                type="button"
                 onClick={handleGameBoardShare}
-                className="h-[42px] text-lg"
+                className="pod-btn h-11 w-full px-2 text-sm font-semibold leading-tight"
               >
                 Share Game
-              </Button>
+              </button>
             </motion.div>
           )}
         </AnimatePresence>
