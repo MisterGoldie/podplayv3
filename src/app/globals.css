@@ -3,15 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #0a0a0a;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --pod-bg: #140822;
+  --pod-panel: #1d0a33;
+  --pod-glow: rgba(232, 121, 249, 0.45);
+  --foreground: #fdf4ff;
 }
 
 html, body {
@@ -24,7 +19,7 @@ html, body {
 }
 
 body {
-  background: #1A0B2E;
+  background: #140822;
   color: var(--foreground);
   font-family: 'Inter', Helvetica, Arial, sans-serif;
 }
@@ -45,4 +40,16 @@ body {
 
 .box-shadow {
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.pod-btn {
+  @apply rounded-full border border-fuchsia-300/35 bg-[#1d0a33] text-white shadow-[0_0_16px_rgba(232,121,249,0.22)] transition-all hover:border-fuchsia-200/80 hover:bg-[#2a1048] hover:shadow-[0_0_22px_rgba(232,121,249,0.45)];
+}
+
+.pod-btn-primary {
+  @apply rounded-full border border-fuchsia-200/50 bg-gradient-to-b from-fuchsia-500 to-fuchsia-800 text-white shadow-[0_0_22px_rgba(232,121,249,0.4)] transition-all hover:from-fuchsia-400 hover:to-fuchsia-700;
+}
+
+.pod-panel {
+  @apply rounded-[28px] border border-fuchsia-300/25 bg-[#140822]/95 shadow-[0_20px_50px_rgba(0,0,0,0.45)];
 }

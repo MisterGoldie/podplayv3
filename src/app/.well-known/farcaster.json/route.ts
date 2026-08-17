@@ -17,7 +17,7 @@ export async function GET() {
       name: "POD Play v3",
       iconUrl: `${appUrl}/icon.png`,
       splashImageUrl: `${appUrl}/splash.png`,
-      splashBackgroundColor: "#1A0B2E",
+      splashBackgroundColor: "#140822",
       homeUrl: appUrl,
       webhookUrl: `${appUrl}/api/webhook`,
     },

@@ -1,7 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Board, Difficulty, GameState } from "~/types/game";
+
+const BASE_SPEED = 0.35;
+const SPEED_PER_PIECE = 0.08;
 
 export function useBoardRotation(
   difficulty: Difficulty,
@@ -10,49 +13,67 @@ export function useBoardRotation(
   gameSession: number
 ) {
   const boardRef = useRef<HTMLDivElement>(null);
-  const animationRef = useRef<number>(0);
+  const frameRef = useRef(0);
+  const angleRef = useRef(0);
+  const speedRef = useRef(BASE_SPEED);
+  const spinningRef = useRef(false);
 
-  const resetTransform = () => {
+  const applyAngle = useCallback((angle: number) => {
     if (boardRef.current) {
-      boardRef.current.style.transform = "rotate(0deg)";
+      boardRef.current.style.transform = `rotate(${angle}deg)`;
     }
-    if (animationRef.current) {
-      cancelAnimationFrame(animationRef.current);
+  }, []);
+
+  const stopSpin = useCallback(() => {
+    spinningRef.current = false;
+    if (frameRef.current) {
+      cancelAnimationFrame(frameRef.current);
+      frameRef.current = 0;
     }
-  };
+  }, []);
+
+  const resetTransform = useCallback(() => {
+    stopSpin();
+    angleRef.current = 0;
+    applyAngle(0);
+  }, [applyAngle, stopSpin]);
+
+  const pieceCount = board.filter(Boolean).length;
+  const hasPieces = pieceCount > 0;
+  speedRef.current = BASE_SPEED + pieceCount * SPEED_PER_PIECE;
 
   useEffect(() => {
-    if (difficulty !== "hard" || !boardRef.current || gameState !== "game") {
+    const shouldSpin =
+      difficulty === "hard" && gameState === "game" && hasPieces;
+
+    if (!shouldSpin) {
+      resetTransform();
       return;
     }
 
-    const baseSpeed = 0.3;
+    spinningRef.current = true;
 
-    const animate = () => {
-      if (!boardRef.current) return;
-      const rotationSpeed = baseSpeed + board.filter(Boolean).length * 0.1;
-      const currentRotation =
-        parseFloat(boardRef.current.style.transform.replace(/[^\d.-]/g, "")) ||
-        0;
-      boardRef.current.style.transform = `rotate(${currentRotation + rotationSpeed}deg)`;
-      animationRef.current = requestAnimationFrame(animate);
+    const tick = () => {
+      if (!spinningRef.current) return;
+      angleRef.current = (angleRef.current + speedRef.current) % 360;
+      applyAngle(angleRef.current);
+      frameRef.current = requestAnimationFrame(tick);
     };
 
-    if (!board.every((square) => square === null)) {
-      animationRef.current = requestAnimationFrame(animate);
-    } else if (boardRef.current) {
-      boardRef.current.style.transform = "rotate(0deg)";
-    }
+    frameRef.current = requestAnimationFrame(tick);
 
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-      if (boardRef.current) {
-        boardRef.current.style.transform = "rotate(0deg)";
-      }
+      stopSpin();
     };
-  }, [difficulty, board, gameState, gameSession]);
+  }, [
+    applyAngle,
+    difficulty,
+    gameSession,
+    gameState,
+    hasPieces,
+    resetTransform,
+    stopSpin,
+  ]);
 
   return { boardRef, resetTransform };
 }

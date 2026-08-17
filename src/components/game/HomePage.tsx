@@ -32,18 +32,18 @@ export default function HomePage({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.4 }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full blur-md" />
+          <div className="absolute inset-0 bg-gradient-to-r from-fuchsia-500 to-fuchsia-800 rounded-full blur-md" />
           <img
             src={profileImage}
             alt="Profile"
-            className="relative w-20 h-20 rounded-full object-cover border-2 border-purple-400/30 shadow-[0_0_15px_rgba(168,85,247,0.5)]"
+            className="relative w-20 h-20 rounded-full object-cover border-2 border-fuchsia-300/50 shadow-[0_0_18px_rgba(232,121,249,0.55)]"
           />
         </motion.div>
       )}
 
       {frameContext?.user?.username && (
         <motion.div
-          className="text-white text-lg mb-6 text-shadow text-center"
+          className="text-fuchsia-100 text-lg mb-6 text-shadow text-center"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35, duration: 0.4, ease: "easeOut" }}
@@ -86,7 +86,7 @@ export default function HomePage({
         }}
       >
         <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-purple-600 to-purple-800 rounded-xl blur-md -rotate-1"
+          className="absolute inset-0 bg-fuchsia-500/40 rounded-full blur-md"
           animate={{
             rotate: [-2, 2, -2],
             scale: [1, 1.02, 1],
@@ -100,9 +100,9 @@ export default function HomePage({
         />
         <Button
           onClick={onPlayClick}
-          className="relative w-full py-6 text-3xl font-black bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 rounded-xl border-2 border-purple-400/30 shadow-[0_0_15px_rgba(168,85,247,0.5)]"
+          className="relative w-full py-6 text-3xl font-black pod-btn-primary"
         >
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-purple-100">
+          <span className="text-white">
             Tic-Tac-Toe
           </span>
         </Button>

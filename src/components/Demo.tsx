@@ -87,7 +87,7 @@ export default function Demo({ frameContext }: DemoProps) {
               key="game-container"
             >
               <motion.div
-                className="w-[400px] h-[400px] relative flex flex-col items-center justify-center"
+                className="relative flex h-full w-full flex-col items-center justify-center"
                 initial={{ scale: 0.95 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.3 }}
@@ -116,7 +116,7 @@ export default function Demo({ frameContext }: DemoProps) {
                       >
                         <Button
                           onClick={game.handleBackFromLeaderboard}
-                          className="w-3/4 py-3 text-xl bg-purple-700 shadow-lg hover:shadow-xl transition-all hover:bg-purple-600 mx-auto"
+                          className="w-3/4 py-3 text-xl mx-auto"
                         >
                           Back to Menu
                         </Button>
@@ -125,7 +125,7 @@ export default function Demo({ frameContext }: DemoProps) {
                   ) : (
                     <motion.div
                       key="gameboard"
-                      className="flex flex-col items-center justify-center gap-8"
+                      className="flex h-full w-full flex-col items-center justify-center"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -156,7 +156,7 @@ export default function Demo({ frameContext }: DemoProps) {
 
       {game.gameState === "menu" && game.menuStep === "game" && (
         <div className="absolute bottom-4 w-full flex justify-center pointer-events-none">
-          <div className="text-xs text-white/50 text-shadow">version 1.7</div>
+          <div className="text-xs text-fuchsia-200/50 text-shadow">version 1.7</div>
         </div>
       )}
     </GameFrame>

@@ -9,9 +9,9 @@ import { preloadAssets } from "~/utils/optimizations";
 const Demo = dynamic(() => import("../components/Demo"), {
   ssr: false,
   loading: () => (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-purple-900">
-      <div className="w-16 h-16 border-4 border-purple-500 border-t-white rounded-full animate-spin mb-4" />
-      <p className="text-white text-xl">Loading POD Play...</p>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#140822]">
+      <div className="w-16 h-16 border-4 border-fuchsia-400 border-t-transparent rounded-full animate-spin mb-4" />
+      <p className="text-fuchsia-100 text-xl">Loading POD Play...</p>
     </div>
   ),
 });

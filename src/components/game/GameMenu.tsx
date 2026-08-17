@@ -113,7 +113,7 @@ export default function GameMenu({ menuStep, onSelectPiece, onSelectDifficulty, 
                       onSelectPiece(piece as any);
                     }, 50);
                   }}
-                  className="w-full mb-2 py-4 text-xl bg-purple-700 shadow-lg hover:shadow-xl transition-shadow"
+                  className="w-full mb-2 py-4 text-xl"
                 >
                   {piece === 'scarygary' ? 'Scary Gary' : 
                    piece === 'chili' ? 'Chili' : 'Pod Logo'}
@@ -137,7 +137,11 @@ export default function GameMenu({ menuStep, onSelectPiece, onSelectDifficulty, 
               transition: { duration: 0.3 }
             }}
           >
-            {[{name: 'easy', color: 'green'}, {name: 'medium', color: 'yellow'}, {name: 'hard', color: 'red'}].map((diff, index) => (
+            {[
+              { name: "easy", className: "border-emerald-300/50 shadow-[0_0_16px_rgba(52,211,153,0.25)]" },
+              { name: "medium", className: "border-fuchsia-300/50" },
+              { name: "hard", className: "border-rose-300/60 shadow-[0_0_16px_rgba(251,113,133,0.28)]" },
+            ].map((diff, index) => (
               <motion.div
                 key={diff.name}
                 variants={itemVariants}
@@ -159,7 +163,7 @@ export default function GameMenu({ menuStep, onSelectPiece, onSelectDifficulty, 
                       onSelectDifficulty(diff.name as any);
                     }, 50);
                   }}
-                  className={`w-full mb-2 py-4 text-xl bg-${diff.color}-600 shadow-lg hover:shadow-xl transition-shadow`}
+                  className={`w-full mb-2 py-4 text-xl ${diff.className}`}
                 >
                   {diff.name.charAt(0).toUpperCase() + diff.name.slice(1)}
                 </Button>
@@ -189,7 +193,7 @@ export default function GameMenu({ menuStep, onSelectPiece, onSelectDifficulty, 
               onBack();
             }, 50);
           }}
-          className="w-3/4 py-4 text-xl bg-purple-700 shadow-lg hover:shadow-xl transition-shadow"
+          className="w-3/4 py-4 text-xl"
         >
           Back
         </Button>

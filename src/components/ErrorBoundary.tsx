@@ -24,10 +24,10 @@ export class ErrorBoundary extends React.Component<Props, State> {
   public render() {
     if (this.state.hasError) {
       return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-purple-900 text-white p-4">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-[#140822] text-fuchsia-100 p-4">
           <h1 className="text-2xl mb-4">Something went wrong</h1>
           <button
-            className="bg-purple-600 px-4 py-2 rounded hover:bg-purple-700"
+            className="pod-btn px-4 py-2"
             onClick={() => this.setState({ hasError: false })}
           >
             Try again
