@@ -1,7 +1,7 @@
 "use client";
 
 import { Context, sdk } from "@farcaster/miniapp-sdk";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { GameLogic } from "~/components/game/GameLogic";
 import { NotificationManager } from "~/components/game/NotificationManager";
 import { useBoardRotation } from "~/hooks/useBoardRotation";
@@ -78,6 +78,8 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
     gameSession
   );
 
+  const playIdRef = useRef(0);
+
   const sendThanksNotification = useCallback(async () => {
     if (!fid || hasSentThanksNotification) return;
     await NotificationManager.sendThanksNotification(fid);
@@ -85,7 +87,9 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
   }, [fid, hasSentThanksNotification]);
 
   const handleTimeout = useCallback(async () => {
+    playIdRef.current += 1;
     setEndedByTimer(true);
+    setTimerStarted(false);
     sounds.stopCountdownSound();
     sounds.stopGameJingle();
     if (!isMuted) {
@@ -97,13 +101,16 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
 
   const timerActive =
     timerStarted &&
+    gameState === "game" &&
+    !endedByTimer &&
+    !winner &&
+    !isDraw &&
     !GameLogic.calculateWinner(board) &&
     !board.every((square) => square !== null);
 
-  const { timeLeft, setTimeLeft } = useGameTimer({
+  const { timeLeft, resetTimer } = useGameTimer({
     isActive: timerActive,
     onTimeUp: handleTimeout,
-    onStopCountdown: sounds.stopCountdownSound,
   });
 
   useEffect(() => {
@@ -119,7 +126,7 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
 
       setTimeout(() => {
         setBoard(emptyBoard());
-        setIsXNext(true);
+        setIsXNext(false);
         setTimerStarted(false);
         setEndedByTimer(false);
         setShowLeaderboard(false);
@@ -129,10 +136,12 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
         setGameState("game");
         setSelectedPiece(piece);
         setDifficulty(diff);
+        playIdRef.current += 1;
+        resetTimer();
         resetTransform();
       }, 300);
     },
-    [resetTransform, sounds]
+    [resetTimer, resetTransform, sounds]
   );
 
   const handleMove = useCallback(
@@ -141,6 +150,7 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
         board[index] ||
         GameLogic.calculateWinner(board) ||
         !isXNext ||
+        endedByTimer ||
         timeLeft <= 0
       ) {
         return;
@@ -158,11 +168,11 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
       }
 
       if (GameLogic.calculateWinner(newBoard)) {
+        playIdRef.current += 1;
         sounds.stopGameJingle();
         sounds.stopCountdownSound();
         setTimerStarted(false);
         setWinner(true);
-        setTimeLeft(0);
         playOutcomeSound("/sounds/winning.mp3", sounds.playWinning);
 
         await recordResult(fid, "win", difficulty);
@@ -173,8 +183,10 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
         return;
       }
 
+      const playId = playIdRef.current;
       setTimeout(async () => {
-        if (timeLeft <= 0 || GameLogic.calculateWinner(newBoard)) return;
+        if (playId !== playIdRef.current) return;
+        if (GameLogic.calculateWinner(newBoard)) return;
 
         const computerMove = GameLogic.getComputerMove(
           newBoard,
@@ -189,15 +201,19 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
         setIsXNext(true);
 
         if (GameLogic.calculateWinner(nextBoard)) {
+          playIdRef.current += 1;
           sounds.stopGameJingle();
           sounds.stopCountdownSound();
+          setTimerStarted(false);
           setWinner(true);
           playOutcomeSound("/sounds/losing.mp3", sounds.playLosing);
           await recordResult(fid, "loss", difficulty);
           await notifyResult(fid, "loss");
         } else if (nextBoard.every((square) => square !== null)) {
+          playIdRef.current += 1;
           sounds.stopGameJingle();
           sounds.stopCountdownSound();
+          setTimerStarted(false);
           setIsDraw(true);
           playOutcomeSound("/sounds/drawing.mp3", sounds.playDrawing);
           await recordResult(fid, "tie");
@@ -212,10 +228,10 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
       isXNext,
       selectedPiece,
       sendThanksNotification,
-      setTimeLeft,
       sounds,
       timeLeft,
       timerStarted,
+      endedByTimer,
     ]
   );
 
@@ -231,14 +247,16 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
       setGameState("menu");
       setMenuStep("game");
       setBoard(emptyBoard());
-      setIsXNext(true);
+      setIsXNext(false);
       setTimerStarted(false);
       setWinner(false);
       setIsDraw(false);
       setEndedByTimer(false);
+      playIdRef.current += 1;
+      resetTimer();
       setGameSession((prev) => prev + 1);
     }, 300);
-  }, [resetTransform, sounds]);
+  }, [resetTimer, resetTransform, sounds]);
 
   const handlePlayAgain = useCallback(() => {
     sounds.playClick();
@@ -252,12 +270,14 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
       setIsDraw(false);
       resetTransform();
       setBoard(emptyBoard());
-      setIsXNext(true);
+      setIsXNext(false);
       setTimerStarted(false);
       setGameSession((prev) => prev + 1);
+      playIdRef.current += 1;
+      resetTimer();
       setTimeout(() => sounds.playGameJingle(), 50);
     }, 300);
-  }, [resetTransform, sounds]);
+  }, [resetTimer, resetTransform, sounds]);
 
   const toggleMute = useCallback(() => {
     setIsMuted((prev) => {
@@ -300,9 +320,11 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
       return;
     }
 
+    const playId = playIdRef.current;
     const cpuMove = Math.floor(Math.random() * 9);
     const timeout = setTimeout(() => {
-      const nextBoard = [...board];
+      if (playId !== playIdRef.current) return;
+      const nextBoard = emptyBoard();
       nextBoard[cpuMove] = "X";
       setBoard(nextBoard);
       setIsXNext(true);
@@ -310,6 +332,12 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
 
     return () => clearTimeout(timeout);
   }, [gameState, board]);
+
+  useEffect(() => {
+    if (timerActive && timeLeft === 3) {
+      sounds.playCountdownSound();
+    }
+  }, [sounds, timeLeft, timerActive]);
 
   return {
     isLoading,

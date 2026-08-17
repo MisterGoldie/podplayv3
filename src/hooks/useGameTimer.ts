@@ -1,44 +1,45 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+const GAME_SECONDS = 15;
 
 interface UseGameTimerOptions {
   isActive: boolean;
   onTimeUp: () => void;
-  onStopCountdown?: () => void;
 }
 
-export function useGameTimer({
-  isActive,
-  onTimeUp,
-  onStopCountdown,
-}: UseGameTimerOptions) {
-  const [timeLeft, setTimeLeft] = useState(15);
+export function useGameTimer({ isActive, onTimeUp }: UseGameTimerOptions) {
+  const [timeLeft, setTimeLeft] = useState(GAME_SECONDS);
+  const onTimeUpRef = useRef(onTimeUp);
+  const firedRef = useRef(false);
 
-  useEffect(() => {
-    if (!isActive || timeLeft <= 0) {
-      return;
-    }
+  onTimeUpRef.current = onTimeUp;
 
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          onTimeUp();
-          onStopCountdown?.();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [isActive, timeLeft, onTimeUp, onStopCountdown]);
+  const resetTimer = useCallback(() => {
+    firedRef.current = false;
+    setTimeLeft(GAME_SECONDS);
+  }, []);
 
   useEffect(() => {
     if (!isActive) {
-      setTimeLeft(15);
+      return;
     }
+
+    const id = window.setInterval(() => {
+      setTimeLeft((prev) => (prev <= 1 ? 0 : prev - 1));
+    }, 1000);
+
+    return () => window.clearInterval(id);
   }, [isActive]);
 
-  return { timeLeft, setTimeLeft };
+  useEffect(() => {
+    if (!isActive || timeLeft !== 0 || firedRef.current) {
+      return;
+    }
+    firedRef.current = true;
+    onTimeUpRef.current();
+  }, [isActive, timeLeft]);
+
+  return { timeLeft, resetTimer };
 }
