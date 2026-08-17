@@ -1,4 +1,4 @@
-POD Play v3 
+POD Play v2 
 
 A Farcaster Frames v2 gameapp.
 

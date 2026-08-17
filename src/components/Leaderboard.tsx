@@ -23,8 +23,8 @@ type LeaderboardProps = {
 };
 
 function shareGame() {
-  const shareText = "Have you played POD Play v3? 🕹️";
-  const shareUrl = "https://podplayv3.vercel.app";
+  const shareText = "Have you played POD Play v2? 🕹️";
+  const shareUrl = "https://podplayv2.vercel.app";
   sdk.actions.openUrl(
     `https://warpcast.com/~/compose?text=${encodeURIComponent(shareText)}&embeds[]=${encodeURIComponent(shareUrl)}`
   );

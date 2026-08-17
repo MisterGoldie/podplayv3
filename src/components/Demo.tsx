@@ -141,7 +141,7 @@ export default function Demo({ frameContext }: DemoProps) {
 
       {game.gameState === "menu" && game.menuStep === "game" && (
         <div className="absolute bottom-4 w-full flex justify-center pointer-events-none">
-          <div className="text-xs text-fuchsia-200/50 text-shadow">version 1.7</div>
+          <div className="text-xs text-fuchsia-200/50 text-shadow">version 1.8</div>
         </div>
       )}
     </GameFrame>

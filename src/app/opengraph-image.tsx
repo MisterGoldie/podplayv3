@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "POD Play v3";
+export const alt = "POD Play v2";
 export const size = {
   width: 600,
   height: 400,
