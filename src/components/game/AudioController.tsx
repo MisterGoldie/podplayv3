@@ -10,7 +10,7 @@ export default function AudioController({ isMuted, onMuteToggle }: AudioControll
   
   return (
     <div 
-      className="absolute top-16 left-4"
+      className="absolute top-3 left-3"
       style={{ zIndex: 50 }}
     >
       <button 

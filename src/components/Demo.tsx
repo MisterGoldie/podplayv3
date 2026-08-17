@@ -28,24 +28,15 @@ export default function Demo({ frameContext }: DemoProps) {
       showMenuBackground={game.gameState !== "game"}
       timeLeft={game.timeLeft}
       showTimer={game.gameState === "game" && !game.showLeaderboard}
+      insets={frameContext?.client.safeAreaInsets}
     >
-      <div className="flex flex-col items-center w-full max-w-[400px] h-full px-4 pt-16">
-        {game.gameState === "menu" && game.profileImage && (
-          <div className="relative mb-12">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full blur-md" />
-            <img
-              src={game.profileImage}
-              alt="Profile"
-              className="relative w-24 h-24 rounded-full object-cover border-2 border-purple-400/30 shadow-[0_0_15px_rgba(168,85,247,0.5)]"
-            />
-          </div>
-        )}
-
+      <div className="relative flex flex-col items-center justify-center w-full h-full px-4">
         <AnimatePresence mode="wait">
           {game.gameState === "menu" ? (
             game.menuStep === "game" ? (
               <motion.div
                 key="home"
+                className="w-full h-full"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
@@ -53,6 +44,7 @@ export default function Demo({ frameContext }: DemoProps) {
               >
                 <HomePage
                   frameContext={frameContext}
+                  profileImage={game.profileImage}
                   onPlayClick={() => {
                     game.sounds.playClick();
                     game.setMenuStep("piece");
@@ -163,7 +155,7 @@ export default function Demo({ frameContext }: DemoProps) {
       </div>
 
       {game.gameState === "menu" && game.menuStep === "game" && (
-        <div className="absolute bottom-10 w-full flex justify-center">
+        <div className="absolute bottom-4 w-full flex justify-center pointer-events-none">
           <div className="text-xs text-white/50 text-shadow">version 1.7</div>
         </div>
       )}

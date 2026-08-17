@@ -17,18 +17,16 @@
 html, body {
   margin: 0;
   padding: 0;
-  height: 100vh;
-  min-height: 100vh;
+  width: 100%;
+  height: 100%;
+  min-height: 100dvh;
   overscroll-behavior: none;
 }
 
 body {
-  background: linear-gradient(135deg, #0d316f 0%, #9c2d8b 50%, #c92424 100%);
+  background: #1A0B2E;
   color: var(--foreground);
   font-family: 'Inter', Helvetica, Arial, sans-serif;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
 
 * {
