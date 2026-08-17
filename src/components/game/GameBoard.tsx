@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 interface GameBoardProps {
   timeLeft: number;
   getGameStatus: () => string;
-  boardRef: RefObject<HTMLDivElement>;
+  boardRef: RefObject<HTMLDivElement | null>;
   board: Array<'X' | 'scarygary' | 'chili' | 'podplaylogo' | null>;
   handleMove: (index: number) => void;
   handlePlayAgain: () => void;
