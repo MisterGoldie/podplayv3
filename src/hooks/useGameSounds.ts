@@ -1,69 +1,161 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-import { SoundManager } from "~/components/game/SoundManager";
+import { useCallback, useEffect, useRef } from "react";
 import { GameState } from "~/types/game";
 
-function safeCall(fn: (() => void) | undefined) {
-  return () => {
-    try {
-      fn?.();
-    } catch (error) {
-      console.error("Error in sound handler:", error);
-    }
-  };
+type BgmTrack = "menu" | "game" | "off";
+
+function createAudio(src: string, loop = false, volume = 0.3) {
+  const audio = new Audio(src);
+  audio.loop = loop;
+  audio.volume = volume;
+  audio.preload = "auto";
+  return audio;
 }
 
-export function useGameSounds(isMuted: boolean, gameState: GameState) {
-  const sounds = SoundManager({ isMuted, gameState });
+async function tryPlay(audio: HTMLAudioElement | null) {
+  if (!audio) return;
+  try {
+    await audio.play();
+  } catch {
+    // Autoplay can be blocked until a gesture; ignore.
+  }
+}
 
-  useEffect(() => {
-    if (document.documentElement.hasAttribute("data-interaction-listeners")) {
+function pause(audio: HTMLAudioElement | null, reset = false) {
+  if (!audio) return;
+  audio.pause();
+  if (reset) {
+    audio.currentTime = 0;
+  }
+}
+
+export function useGameSounds(
+  isMuted: boolean,
+  gameState: GameState,
+  gameOver: boolean
+) {
+  const unlockedRef = useRef(false);
+  const menuRef = useRef<HTMLAudioElement | null>(null);
+  const gameRef = useRef<HTMLAudioElement | null>(null);
+  const clickRef = useRef<HTMLAudioElement | null>(null);
+  const countdownRef = useRef<HTMLAudioElement | null>(null);
+  const sfxRef = useRef<HTMLAudioElement | null>(null);
+  const mutedRef = useRef(isMuted);
+  const gameOverRef = useRef(gameOver);
+  const trackRef = useRef<BgmTrack>("off");
+
+  mutedRef.current = isMuted;
+  gameOverRef.current = gameOver;
+  trackRef.current =
+    isMuted || !unlockedRef.current
+      ? "off"
+      : gameState === "menu"
+        ? "menu"
+        : gameOver
+          ? "off"
+          : "game";
+
+  const syncBgm = useCallback(() => {
+    const track = trackRef.current;
+    const menu = menuRef.current;
+    const game = gameRef.current;
+
+    if (track === "menu") {
+      pause(game, true);
+      void tryPlay(menu);
       return;
     }
 
-    document.documentElement.setAttribute("data-interaction-listeners", "true");
+    if (track === "game") {
+      pause(menu, true);
+      void tryPlay(game);
+      return;
+    }
 
-    const handleInteraction = () => {
-      document.documentElement.classList.add("user-interacted");
-    };
-
-    window.addEventListener("click", handleInteraction);
-    window.addEventListener("keydown", handleInteraction);
-    window.addEventListener("touchstart", handleInteraction);
-
-    return () => {
-      window.removeEventListener("click", handleInteraction);
-      window.removeEventListener("keydown", handleInteraction);
-      window.removeEventListener("touchstart", handleInteraction);
-      document.documentElement.removeAttribute("data-interaction-listeners");
-    };
+    pause(menu, false);
+    pause(game, gameOverRef.current);
   }, []);
 
-  return useMemo(
-    () => ({
-      playClick: safeCall(sounds.playClick),
-      playWinning: safeCall(sounds.playWinning),
-      playLosing: safeCall(sounds.playLosing),
-      playDrawing: safeCall(sounds.playDrawing),
-      playCountdownSound: safeCall(sounds.playCountdownSound),
-      stopCountdownSound: safeCall(sounds.stopCountdownSound),
-      stopGameJingle: safeCall(sounds.stopGameJingle),
-      stopOpeningTheme: safeCall(sounds.stopOpeningTheme),
-      playGameJingle: safeCall(sounds.playGameJingle),
-      playOpeningTheme: safeCall(sounds.playOpeningTheme),
-    }),
-    [
-      sounds.playClick,
-      sounds.playWinning,
-      sounds.playLosing,
-      sounds.playDrawing,
-      sounds.playCountdownSound,
-      sounds.stopCountdownSound,
-      sounds.stopGameJingle,
-      sounds.stopOpeningTheme,
-      sounds.playGameJingle,
-      sounds.playOpeningTheme,
-    ]
-  );
+  useEffect(() => {
+    menuRef.current = createAudio("/sounds/openingtheme.mp3", true, 0.3);
+    gameRef.current = createAudio("/sounds/jingle.mp3", true, 0.3);
+    clickRef.current = createAudio("/sounds/click.mp3", false, 0.55);
+    countdownRef.current = createAudio("/sounds/countdown.mp3", false, 0.5);
+
+    const unlock = () => {
+      if (unlockedRef.current) return;
+      unlockedRef.current = true;
+      syncBgm();
+    };
+
+    window.addEventListener("pointerdown", unlock);
+    window.addEventListener("keydown", unlock);
+
+    return () => {
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("keydown", unlock);
+      pause(menuRef.current, true);
+      pause(gameRef.current, true);
+      pause(clickRef.current, true);
+      pause(countdownRef.current, true);
+      pause(sfxRef.current, true);
+    };
+  }, [syncBgm]);
+
+  useEffect(() => {
+    if (isMuted) {
+      pause(countdownRef.current, true);
+      pause(sfxRef.current, true);
+    }
+    syncBgm();
+  }, [gameOver, gameState, isMuted, syncBgm]);
+
+  const playSfx = useCallback((src: string) => {
+    if (mutedRef.current) return;
+    pause(sfxRef.current, true);
+    const audio = new Audio(src);
+    audio.volume = 0.5;
+    sfxRef.current = audio;
+    void tryPlay(audio);
+  }, []);
+
+  const playClick = useCallback(() => {
+    if (mutedRef.current) return;
+    const click = clickRef.current;
+    if (!click) return;
+    click.currentTime = 0;
+    void tryPlay(click);
+  }, []);
+
+  const stopCountdownSound = useCallback(() => {
+    pause(countdownRef.current, true);
+  }, []);
+
+  const playCountdownSound = useCallback(() => {
+    if (mutedRef.current) return;
+    const countdown = countdownRef.current;
+    if (!countdown) return;
+    countdown.currentTime = 0;
+    void tryPlay(countdown);
+  }, []);
+
+  return {
+    playClick,
+    playWinning: () => playSfx("/sounds/winning.mp3"),
+    playLosing: () => playSfx("/sounds/losing.mp3"),
+    playDrawing: () => playSfx("/sounds/drawing.mp3"),
+    playCountdownSound,
+    stopCountdownSound,
+    stopGameJingle: () => pause(gameRef.current, true),
+    stopOpeningTheme: () => pause(menuRef.current, true),
+    playGameJingle: () => {
+      if (mutedRef.current) return;
+      void tryPlay(gameRef.current);
+    },
+    playOpeningTheme: () => {
+      if (mutedRef.current) return;
+      void tryPlay(menuRef.current);
+    },
+  };
 }

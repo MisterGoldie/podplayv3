@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { sdk } from '@farcaster/miniapp-sdk';
 
@@ -18,31 +18,17 @@ type LeaderboardEntry = {
 type LeaderboardView = 'top' | 'personal';
 
 type LeaderboardProps = {
-  isMuted: boolean;
-  playGameJingle: () => void;
   currentUserFid?: string;
   pfpUrl?: string;
 };
 
 const shareText = `Have you played POD Play v3? 🕹️\npodplayv3.vercel.app`;
 
-export default function Leaderboard({ isMuted, playGameJingle, currentUserFid, pfpUrl }: LeaderboardProps) {
+export default function Leaderboard({ currentUserFid, pfpUrl }: LeaderboardProps) {
   const [view, setView] = useState<LeaderboardView>('top');
   const [isLoading, setIsLoading] = useState(true);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [currentUserData, setCurrentUserData] = useState<LeaderboardEntry | null>(null);
-  const isJinglePlaying = useRef(false);
-
-  // Handle jingle playback
-  useEffect(() => {
-    if (!isMuted && !isJinglePlaying.current) {
-      isJinglePlaying.current = true;
-      playGameJingle();
-    }
-    return () => {
-      isJinglePlaying.current = false;
-    };
-  }, [isMuted, playGameJingle]);
 
   const handleViewChange = (newView: LeaderboardView) => {
     setView(newView);

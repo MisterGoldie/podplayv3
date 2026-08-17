@@ -10,7 +10,6 @@ import { useGameTimer } from "~/hooks/useGameTimer";
 import { updateGameResult } from "~/services/api";
 import { shouldSendNotification } from "~/utils/notificationUtils";
 import { getGameStatus } from "~/utils/gameStatus";
-import { playOutcomeSound } from "~/utils/playOutcomeSound";
 import { preloadAssets } from "~/utils/optimizations";
 import {
   Board,
@@ -70,7 +69,11 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
   const [hasSentThanksNotification, setHasSentThanksNotification] =
     useState(false);
 
-  const sounds = useGameSounds(isMuted, gameState);
+  const sounds = useGameSounds(
+    isMuted,
+    gameState,
+    winner || isDraw || endedByTimer
+  );
   const { boardRef, resetTransform } = useBoardRotation(
     difficulty,
     board,
@@ -91,7 +94,6 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
     setEndedByTimer(true);
     setTimerStarted(false);
     sounds.stopCountdownSound();
-    sounds.stopGameJingle();
     if (!isMuted) {
       sounds.playLosing();
     }
@@ -169,11 +171,10 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
 
       if (GameLogic.calculateWinner(newBoard)) {
         playIdRef.current += 1;
-        sounds.stopGameJingle();
         sounds.stopCountdownSound();
         setTimerStarted(false);
         setWinner(true);
-        playOutcomeSound("/sounds/winning.mp3", sounds.playWinning);
+        sounds.playWinning();
 
         await recordResult(fid, "win", difficulty);
         if (fid && (await shouldSendNotification("win"))) {
@@ -202,20 +203,18 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
 
         if (GameLogic.calculateWinner(nextBoard)) {
           playIdRef.current += 1;
-          sounds.stopGameJingle();
           sounds.stopCountdownSound();
           setTimerStarted(false);
           setWinner(true);
-          playOutcomeSound("/sounds/losing.mp3", sounds.playLosing);
+          sounds.playLosing();
           await recordResult(fid, "loss", difficulty);
           await notifyResult(fid, "loss");
         } else if (nextBoard.every((square) => square !== null)) {
           playIdRef.current += 1;
-          sounds.stopGameJingle();
           sounds.stopCountdownSound();
           setTimerStarted(false);
           setIsDraw(true);
-          playOutcomeSound("/sounds/drawing.mp3", sounds.playDrawing);
+          sounds.playDrawing();
           await recordResult(fid, "tie");
           await notifyResult(fid, "draw");
         }
@@ -238,8 +237,6 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
   const resetGame = useCallback(() => {
     sounds.playClick();
     sounds.stopCountdownSound();
-    sounds.stopGameJingle();
-    sounds.playOpeningTheme();
     setShowLeaderboard(false);
     resetTransform();
 
@@ -261,7 +258,6 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
   const handlePlayAgain = useCallback(() => {
     sounds.playClick();
     sounds.stopCountdownSound();
-    sounds.stopGameJingle();
     setShowLeaderboard(false);
 
     setTimeout(() => {
@@ -275,34 +271,21 @@ export function usePodPlay(frameContext?: Context.MiniAppContext) {
       setGameSession((prev) => prev + 1);
       playIdRef.current += 1;
       resetTimer();
-      setTimeout(() => sounds.playGameJingle(), 50);
     }, 300);
   }, [resetTimer, resetTransform, sounds]);
 
   const toggleMute = useCallback(() => {
-    setIsMuted((prev) => {
-      const next = !prev;
-      if (next) {
-        sounds.stopGameJingle();
-        sounds.stopOpeningTheme();
-        sounds.stopCountdownSound();
-      }
-      return next;
-    });
-  }, [sounds]);
+    setIsMuted((prev) => !prev);
+  }, []);
 
   const handleViewLeaderboard = useCallback(() => {
     setShowLeaderboard(true);
     sounds.playClick();
-    if (!isMuted) {
-      sounds.stopGameJingle();
-    }
-  }, [isMuted, sounds]);
+  }, [sounds]);
 
   const handleBackFromLeaderboard = useCallback(() => {
     setShowLeaderboard(false);
     sounds.playClick();
-    sounds.stopGameJingle();
     resetGame();
   }, [resetGame, sounds]);
 

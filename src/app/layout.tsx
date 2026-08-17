@@ -25,11 +25,8 @@ export default function RootLayout({
         {/* Preload other critical assets */}
         <link rel="preload" href="/podplaylogo.png" as="image" />
         <link rel="preload" href="/game-board.png" as="image" />
-        <link rel="preload" href="/sounds/openingtheme.mp3" as="audio" />
-        <link rel="preload" href="/sounds/jingle.mp3" as="audio" />
         {/* Prefetch secondary assets */}
         <link rel="prefetch" href="/splash.png" />
-        <link rel="prefetch" href="/sounds/click.mp3" />
       </head>
       <body className="overscroll-none">
         <Providers>{children}</Providers>

@@ -103,8 +103,6 @@ export default function Demo({ frameContext }: DemoProps) {
                       transition={{ duration: 0.3 }}
                     >
                       <Leaderboard
-                        isMuted={game.isMuted}
-                        playGameJingle={game.sounds.playGameJingle}
                         currentUserFid={frameContext?.user?.fid?.toString()}
                         pfpUrl={frameContext?.user?.pfpUrl}
                       />
