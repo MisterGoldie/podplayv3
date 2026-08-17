@@ -7,7 +7,6 @@ import GameBoard from "~/components/game/GameBoard";
 import { GameFrame, GameLoadingScreen } from "~/components/game/GameFrame";
 import GameMenu from "~/components/game/GameMenu";
 import HomePage from "~/components/game/HomePage";
-import { Button } from "~/components/ui/Button";
 import { usePodPlay } from "~/hooks/usePodPlay";
 
 type DemoProps = {
@@ -96,7 +95,7 @@ export default function Demo({ frameContext }: DemoProps) {
                   {game.showLeaderboard ? (
                     <motion.div
                       key="leaderboard"
-                      className="flex flex-col items-center w-full gap-4"
+                      className="flex h-full min-h-0 w-full flex-col px-2 pt-10 pb-3"
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
@@ -105,20 +104,8 @@ export default function Demo({ frameContext }: DemoProps) {
                       <Leaderboard
                         currentUserFid={frameContext?.user?.fid?.toString()}
                         pfpUrl={frameContext?.user?.pfpUrl}
+                        onBackToMenu={game.handleBackFromLeaderboard}
                       />
-                      <motion.div
-                        className="flex flex-col w-full gap-2"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2, duration: 0.3 }}
-                      >
-                        <Button
-                          onClick={game.handleBackFromLeaderboard}
-                          className="w-3/4 py-3 text-xl mx-auto"
-                        >
-                          Back to Menu
-                        </Button>
-                      </motion.div>
                     </motion.div>
                   ) : (
                     <motion.div
