@@ -4,6 +4,7 @@ import "~/app/globals.css";
 import { Providers } from "~/app/providers";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_URL || "http://localhost:3000"),
   title: "Tic-Tac-Maxi",
   description: "Tic-Tac-Toe style game by @goldie and @themrsazon",
 };
@@ -27,7 +28,6 @@ export default function RootLayout({
         <link rel="preload" href="/sounds/openingtheme.mp3" as="audio" />
         <link rel="preload" href="/sounds/jingle.mp3" as="audio" />
         {/* Prefetch secondary assets */}
-        <link rel="prefetch" href="/fantokenlogo.png" />
         <link rel="prefetch" href="/splash.png" />
         <link rel="prefetch" href="/sounds/click.mp3" />
       </head>

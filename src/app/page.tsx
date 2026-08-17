@@ -10,7 +10,7 @@ const frame = {
     title: "Play Now",
     action: {
       type: "launch_frame",
-      name: "POD Play v2",
+      name: "POD Play v3",
       url: appUrl,
       splashImageUrl: `${appUrl}/splash.png`,
       splashBackgroundColor: "#9d00ff",
@@ -22,7 +22,7 @@ export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "POD Play v2",
+    title: "POD Play v3",
     openGraph: {
       title: "Tic-Tac-Maxi",
       description: "Tic-Tac-Toe style game by @goldie and the POD team.",

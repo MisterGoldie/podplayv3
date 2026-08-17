@@ -11,11 +11,10 @@ import { Button } from "~/components/ui/Button";
 import { usePodPlay } from "~/hooks/usePodPlay";
 
 type DemoProps = {
-  tokenBalance: number;
   frameContext?: Context.MiniAppContext;
 };
 
-export default function Demo({ tokenBalance, frameContext }: DemoProps) {
+export default function Demo({ frameContext }: DemoProps) {
   const game = usePodPlay(frameContext);
 
   if (game.isLoading) {
@@ -53,7 +52,6 @@ export default function Demo({ tokenBalance, frameContext }: DemoProps) {
                 transition={{ duration: 0.3 }}
               >
                 <HomePage
-                  tokenBalance={tokenBalance}
                   frameContext={frameContext}
                   onPlayClick={() => {
                     game.sounds.playClick();

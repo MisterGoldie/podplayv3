@@ -21,7 +21,6 @@ const CRITICAL_ASSETS = [
 
 // Secondary assets loaded after critical ones
 const SECONDARY_ASSETS = [
-  '/fantokenlogo.png',
   '/splash.png',
   '/sounds/click.mp3',
   '/sounds/winning.mp3',
@@ -138,8 +137,7 @@ export const preloadImages = () => {
     '/mainlogo.png', 
     '/game-board.png',
     '/podplaylogo.png',
-    '/chili.png',
-    '/fantokenlogo.png'
+    '/chili.png'
   ];
   
   images.forEach(src => {

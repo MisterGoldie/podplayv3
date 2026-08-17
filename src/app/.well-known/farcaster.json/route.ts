@@ -1,4 +1,6 @@
 export async function GET() {
+  const appUrl = process.env.NEXT_PUBLIC_URL || "https://podplayv3.vercel.app";
+
   const config = {
     accountAssociation: {
       header:
@@ -12,12 +14,12 @@ export async function GET() {
     },
     frame: {
       version: "0.0.0",
-      name: "POD Play v2",
-      iconUrl: "https://podplayv2.vercel.app/icon.png",
-      splashImageUrl: "https://podplayv2.vercel.app/splash.png",
+      name: "POD Play v3",
+      iconUrl: `${appUrl}/icon.png`,
+      splashImageUrl: `${appUrl}/splash.png`,
       splashBackgroundColor: "#1A0B2E",
-      homeUrl: "https://podplayv2.vercel.app",
-      webhookUrl: "https://podplayv2.vercel.app/api/webhook",
+      homeUrl: appUrl,
+      webhookUrl: `${appUrl}/api/webhook`,
     },
   };
 

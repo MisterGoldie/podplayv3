@@ -1,6 +1,5 @@
-import admin, { db } from '~/utils/firebase';
+import admin, { getDb } from '~/utils/firebase';
 import { fetchUserDataByFid } from '../../../utils/neynarUtils';
-import { checkFanTokenOwnership } from '../../../utils/tokenUtils';
 import { calculatePODScore } from '../../../utils/scoreUtils';
 
 export async function POST(request: Request) {
@@ -11,7 +10,7 @@ export async function POST(request: Request) {
       return Response.json({ error: 'FID is required' }, { status: 400 });
     }
 
-    const userRef = db.collection('users').doc(fid);
+    const userRef = getDb().collection('users').doc(fid);
     
     switch (action) {
       case 'win':
@@ -49,7 +48,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const userFid = searchParams.get('userFid');
     
-    const db = admin.firestore();
+    const db = getDb();
     const usersRef = db.collection('users');
     
     // Get leaderboard data
@@ -63,14 +62,11 @@ export async function GET(request: Request) {
         const data = doc.data();
         const userData = await fetchUserDataByFid(doc.id);
         const totalGames = (data.wins || 0) + (data.losses || 0) + (data.ties || 0);
-        const { balance } = await checkFanTokenOwnership(doc.id);
-        
         const podScore = calculatePODScore(
           data.wins || 0,
           data.ties || 0,
           data.losses || 0,
-          totalGames,
-          balance || 0
+          totalGames
         );
 
         return {
@@ -99,8 +95,7 @@ export async function GET(request: Request) {
         }
         const userDataFromFarcaster = await fetchUserDataByFid(userFid);
         const totalGames = (data.wins || 0) + (data.losses || 0) + (data.ties || 0);
-        const { balance } = await checkFanTokenOwnership(userFid);
-        
+
         userData = {
           fid: userFid,
           username: userDataFromFarcaster?.username || `fid:${userFid}`,
@@ -115,8 +110,7 @@ export async function GET(request: Request) {
             data.wins || 0,
             data.ties || 0,
             data.losses || 0,
-            totalGames,
-            balance || 0
+            totalGames
           )
         };
       }

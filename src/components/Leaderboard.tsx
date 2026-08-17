@@ -24,7 +24,7 @@ type LeaderboardProps = {
   pfpUrl?: string;
 };
 
-const shareText = `Have you played POD Play v2? 🕹️\npodplayv2.vercel.app`;
+const shareText = `Have you played POD Play v3? 🕹️\npodplayv3.vercel.app`;
 
 export default function Leaderboard({ isMuted, playGameJingle, currentUserFid, pfpUrl }: LeaderboardProps) {
   const [view, setView] = useState<LeaderboardView>('top');
@@ -114,8 +114,8 @@ export default function Leaderboard({ isMuted, playGameJingle, currentUserFid, p
               <div className="flex justify-center mt-3">
                 <button
                   onClick={() => {
-                    const shareText = 'Have you played POD Play v2? 🕹️';
-                    const shareUrl = 'podplayv2.vercel.app';
+                    const shareText = 'Have you played POD Play v3? 🕹️';
+                    const shareUrl = 'podplayv3.vercel.app';
                     sdk.actions.openUrl(`https://warpcast.com/~/compose?text=${encodeURIComponent(shareText)}&embeds[]=${encodeURIComponent(shareUrl)}`);
                   }}
                   className="w-[85%] py-2 text-lg bg-purple-700 shadow-lg hover:shadow-xl transition-all hover:bg-purple-600 rounded-lg"
@@ -217,8 +217,8 @@ export default function Leaderboard({ isMuted, playGameJingle, currentUserFid, p
               <div className="flex flex-col gap-4 justify-center">
                 <button
                   onClick={() => {
-                    const shareText = 'Have you played POD Play v2? 🕹️';
-                    const shareUrl = 'podplayv2.vercel.app';
+                    const shareText = 'Have you played POD Play v3? 🕹️';
+                    const shareUrl = 'podplayv3.vercel.app';
                     sdk.actions.openUrl(`https://warpcast.com/~/compose?text=${encodeURIComponent(shareText)}&embeds[]=${encodeURIComponent(shareUrl)}`);
                   }}
                   className="w-[85%] py-2 text-lg bg-purple-700 shadow-lg hover:shadow-xl transition-all hover:bg-purple-600 mx-auto rounded-lg"

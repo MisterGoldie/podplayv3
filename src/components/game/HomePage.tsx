@@ -1,16 +1,13 @@
 import { Button } from "~/components/ui/Button";
-import Image from 'next/image';
 import { Context } from "@farcaster/miniapp-sdk";
 import { motion } from 'framer-motion';
 
 interface HomePageProps {
-  tokenBalance: number;
   frameContext?: Context.MiniAppContext;
   onPlayClick: () => void;
 }
 
-// Replace the current animations with more engaging ones
-export default function HomePage({ tokenBalance, frameContext, onPlayClick }: HomePageProps) {
+export default function HomePage({ frameContext, onPlayClick }: HomePageProps) {
   return (
     <motion.div 
       className="w-full h-full flex flex-col items-center pt-24"
@@ -118,36 +115,6 @@ export default function HomePage({ tokenBalance, frameContext, onPlayClick }: Ho
           </Button>
         </motion.div>
       </motion.div>
-      
-      {tokenBalance > 0 && (
-        <motion.div 
-          className="mt-20 flex items-center space-x-2 bg-gradient-to-r from-purple-900/90 to-purple-800/90 px-4 py-2 rounded-lg border border-purple-500/30 shadow-[0_0_10px_rgba(168,85,247,0.3)]"
-          initial={{ y: 30, opacity: 0, scale: 0.8 }}
-          animate={{ y: 0, opacity: 1, scale: 1 }}
-          transition={{ 
-            delay: 0.8, 
-            type: "spring", 
-            stiffness: 120, 
-            damping: 15 
-          }}
-        >
-          <Image 
-            src="/fantokenlogo.png"
-            alt="Fan Token"
-            width={24} 
-            height={24}
-            className="animate-pulse"
-          />
-          <button
-            onClick={() => window.open('https://warpcast.com/~/channel/thepod', '_blank')}
-            className="text-purple-100 text-sm font-medium hover:text-purple-200 transition-colors"
-          >
-            {tokenBalance.toFixed(2)} /thepod fan tokens owned
-          </button>
-        </motion.div>
-      )}
-      
-      {/* Version text moved to Demo component */}
     </motion.div>
   );
 }

@@ -1,4 +1,4 @@
-import { db } from './firebase';
+import { getDb } from './firebase';
 import { FieldValue } from 'firebase-admin/firestore';
 
 interface NotificationDetails {
@@ -8,7 +8,7 @@ interface NotificationDetails {
 
 export async function storeNotificationDetails(fid: string, details: NotificationDetails) {
   try {
-    await db.collection('notifications').doc(fid).set({
+    await getDb().collection('notifications').doc(fid).set({
       ...details,
       updatedAt: FieldValue.serverTimestamp()
     });
@@ -21,7 +21,7 @@ export async function storeNotificationDetails(fid: string, details: Notificatio
 
 export async function removeNotificationDetails(fid: string) {
   try {
-    await db.collection('notifications').doc(fid).delete();
+    await getDb().collection('notifications').doc(fid).delete();
     console.log(`Removed notification details for FID: ${fid}`);
   } catch (error) {
     console.error(`Error removing notification details for FID ${fid}:`, error);
@@ -31,7 +31,7 @@ export async function removeNotificationDetails(fid: string) {
 
 export async function getNotificationDetails(fid: string): Promise<NotificationDetails | null> {
   try {
-    const doc = await db.collection('notifications').doc(fid).get();
+    const doc = await getDb().collection('notifications').doc(fid).get();
     return doc.exists ? doc.data() as NotificationDetails : null;
   } catch (error) {
     console.error(`Error getting notification details for FID ${fid}:`, error);
